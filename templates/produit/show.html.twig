@@ -1,4 +1,14 @@
-{% extends 'base.html.twig'%}
+{% extends 'base.html.twig' %}
+
 {% block body %}
-<h1>Détail du produit</h1>
+    <h1>
+        {{ product.name }}
+        <small>
+            <div class="badge badge-info">
+                {{ product.price }}€
+            </div>
+        </small>
+    </h1>
+    <img src="/img/{{ product.imageName }}" class="card-img-top"alt="Image de {{ product.name }}">
+    <p>{{ product.description }}</p>
 {% endblock %}

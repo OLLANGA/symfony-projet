@@ -69,6 +69,11 @@ class Product
      */
     private $categorie;
 
+    /**
+     * @ORM\Column(type="string", length=128, nullable=true, unique=true)
+     */
+    private $slug;
+
     public function __construct()
     {
         $this->tags = new ArrayCollection();
@@ -209,6 +214,18 @@ class Product
     public function setCategorie(?Categorie $categorie): self
     {
         $this->categorie = $categorie;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(?string $slug): self
+    {
+        $this->slug = $slug;
 
         return $this;
     }
