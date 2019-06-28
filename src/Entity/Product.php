@@ -34,7 +34,7 @@ class Product
     private $price;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="integer")
      */
     private $nbViews;
 
@@ -77,6 +77,9 @@ class Product
     public function __construct()
     {
         $this->tags = new ArrayCollection();
+
+        $this->nbViews = 0;
+        $this->createdAt = new \DateTime();
     }
 
     public function getId(): ?int

@@ -1,15 +1,17 @@
 <?php
 namespace App\Controller;
 use App\Entity\Product;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Form\ProductType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+
 class ProductController extends AbstractController
 {
     /**
      * Liste des produits
-     * @Route("/produit")
+     * @Route("/produit", name= "liste_produit")
      * @return Response
      */
     public function index(): Response
@@ -32,10 +34,39 @@ class ProductController extends AbstractController
      */
     public function create(Request $requestHTTP): Response
     {
-        // Récupération des POSTS
-        dump($requestHTTP->request);
-        return $this->render('produit/create.html.twig');
+        // Récupération du formulaire
+        $product = new Product();
+        $formProduct = $this->createForm(ProductType::class, $product);
+
+
+        // On envoi les données au formulaire
+        $formProduct->handleRequest($requestHTTP);
+
+        // On vérifie que le formulaire est soumis et valide
+        if($formProduct->isSubmitted()  && $formProduct->isValid()) {
+            //On sauvegarde le produit en BDD grace au manager
+           $manager = $this->getDoctrine()->getManager();
+            $manager->persist($product);
+            $manager->flush();
+        }
+
+        // Ajout du message flash
+        $this->addFlash('success', 'le produit a bien été ajouté');
+
+        // Rédirection
+       // return $this->redirectToRoute('liste_produit');
+
+        /*
+        // On sauvegarde le produit en BDD grâce au manager
+        $manager = $this->getDoctrine()->getManager();
+        $manager->persist($product);
+        $manager->flush();
+        */
+        return $this->render('produit/create.html.twig', [
+            'formProduct' => $formProduct->createView()
+        ]);
     }
+
     /**
      * Affiche le détail d'un produit
      * @Route("/produit/{slug<[a-z0-9\-]+>}", methods={"GET", "POST"})
@@ -54,5 +85,7 @@ class ProductController extends AbstractController
         return $this->render('produit/show.html.twig', [
             'product' => $product
         ]);
+ 
     }
+    
 }
